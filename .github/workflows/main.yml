@@ -1,21 +1,23 @@
-name: CD Deploy to VPS
+name: CD Deploy to VPS (SCP)
 
 on:
   push:
     branches:
       - main
 
-jobs:                                  
+jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy files to VPS
+        uses: appleboy/scp-action@v0.1.7
         with:
-          host: 82.112.238.89
+          host: 82.112.238.89 
           username: root
-          key: SHHVPSKEYY
-          script: |
-            cd /var/www/html
-            git pull origin main
+          key: ${{ secrets.VPS_KEY }}
+          source: "."
+          target: "/var/www/html"
